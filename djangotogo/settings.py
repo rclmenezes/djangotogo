@@ -1,4 +1,9 @@
 # Django settings for djangotogo project.
+import os
+# import dj_database_url
+CURRENT_DIR = os.path.join(os.path.dirname( __file__ ), '..')
+
+PRODUCTION = os.environ.get('PRODUCTION', None)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -9,16 +14,61 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+if PRODUCTION:
+    DEBUG = TEMPLATE_DEBUG = False
+    
+    # Database
+    import dj_database_url
+    DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
+    AWS_STORAGE_BUCKET_NAME = 'djangotogo'
+    S3_URL = 'http://djangotogo.s3.amazonaws.com/'
+    
+    STATIC_ROOT = ''
+    STATIC_URL = S3_URL + 'static/'
+    STATICFILES_DIRS = (
+        CURRENT_DIR + "/static",
+    )
+    
+    # Email
+    EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
+    EMAIL_HOST= 'smtp.sendgrid.net'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
+    
+else:
+    DEBUG = TEMPLATE_DEBUG = True
+    
+    # Database
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': 'djangotogo.db',                      # Or path to database file if using sqlite3.
+            'USER': '',                      # Not used with sqlite3.
+            'PASSWORD': '',     # Not used with sqlite3.
+            'HOST': '',                  # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        }
     }
-}
+    
+    STATIC_ROOT = "static"
+    STATIC_URL = '/static/'
+    # STATICFILES_DIRS = (
+    #         STATIC_ROOT + "/css",
+    #         STATIC_ROOT + "/js",
+    #         STATIC_ROOT + "/img",
+    #     )
+    
+    
+    AWS_STORAGE_BUCKET_NAME = 'djangotogodev'
+    S3_URL = 'http://djangotogodev.s3.amazonaws.com/'
+    
+    # Email
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = 'uprightdev@gmail.com'
+    EMAIL_HOST_PASSWORD = '1l1k3EatingHorseMeat'
+    EMAIL_PORT = 587
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -50,24 +100,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
-
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
-
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
-
-# Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
+MEDIA_URL = S3_URL + 'media/'
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -87,6 +120,15 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
+)
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -103,9 +145,7 @@ ROOT_URLCONF = 'djangotogo.urls'
 WSGI_APPLICATION = 'djangotogo.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+	CURRENT_DIR + '/templates',
 )
 
 INSTALLED_APPS = (
@@ -151,5 +191,11 @@ LOGGING = {
     }
 }
 
-import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
+# S3 stuff
+DEFAULT_FILE_STORAGE = 'djangotogo.s3utils.MediaRootS3BotoStorage'
+STATICFILES_STORAGE = 'djangotogo.s3utils.StaticRootS3BotoStorage'
+AWS_ACCESS_KEY_ID = 'AKIAI4SWCSSRK3ZEATCA'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_PRELOAD_METADATA = True
+#from S3 import CallingFormat
+#AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
