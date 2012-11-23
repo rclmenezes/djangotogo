@@ -61,11 +61,11 @@ else:
     S3_URL = 'http://djangotogodev.s3.amazonaws.com/'
     
     # Email
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'uprightdev@gmail.com'
-    EMAIL_HOST_PASSWORD = '1l1k3EatingHorseMeat'
-    EMAIL_PORT = 587
+    # EMAIL_USE_TLS = True
+    #     EMAIL_HOST = 'smtp.gmail.com'
+    #     EMAIL_HOST_USER = 'APP@gmail.com'
+    #     EMAIL_HOST_PASSWORD = 'GMAIL_PASSWORD'
+    #     EMAIL_PORT = 587
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
