@@ -16,6 +16,7 @@ MANAGERS = ADMINS
 
 if PRODUCTION:
     DEBUG = TEMPLATE_DEBUG = False
+    COMPRESS_ENABLED = True
     
     # Database
     import dj_database_url
@@ -41,6 +42,7 @@ if PRODUCTION:
     
 else:
     DEBUG = TEMPLATE_DEBUG = True
+    COMPRESS_ENABLED = False
     
     # Database
     DATABASES = {
@@ -59,7 +61,7 @@ else:
     S3_URL = 'http://djangotogodev.s3.amazonaws.com/'
     
     # Static
-    STATIC_ROOT = CURRENT_DIR + "static"
+    STATIC_ROOT =  CURRENT_DIR + "/static"
     STATIC_URL = '/static/'
     #STATICFILES_DIRS = (
     #    CURRENT_DIR + "/static",
@@ -110,6 +112,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder'
 )
 
 # Make this unique, and don't share it with anybody.
@@ -163,7 +166,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'gunicorn',
-    'debug_toolbar'
+    'debug_toolbar',
+    'compressor'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -201,6 +205,8 @@ STATICFILES_STORAGE = 'djangotogo.s3utils.StaticRootS3BotoStorage'
 AWS_ACCESS_KEY_ID = 'AKIAI4SWCSSRK3ZEATCA'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_PRELOAD_METADATA = True
+COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_URL = S3_URL
+COMPRESS_STORAGE = STATICFILES_STORAGE
 
 INTERNAL_IPS = ('127.0.0.1',)
