@@ -20,9 +20,12 @@ if PRODUCTION:
     # Database
     import dj_database_url
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
+    
+    # CDN
     AWS_STORAGE_BUCKET_NAME = 'djangotogo'
     S3_URL = 'http://djangotogo.s3.amazonaws.com/'
     
+    # Static
     STATIC_ROOT = ''
     STATIC_URL = S3_URL + 'static/'
     STATICFILES_DIRS = (
@@ -51,14 +54,16 @@ else:
         }
     }
     
-    STATIC_ROOT = "static"
-    STATIC_URL = '/static/'
-    STATICFILES_DIRS = (
-        CURRENT_DIR + "/static",
-    )
-    
+    # CDN
     AWS_STORAGE_BUCKET_NAME = 'djangotogodev'
     S3_URL = 'http://djangotogodev.s3.amazonaws.com/'
+    
+    # Static
+    STATIC_ROOT = CURRENT_DIR + "static"
+    STATIC_URL = '/static/'
+    #STATICFILES_DIRS = (
+    #    CURRENT_DIR + "/static",
+    #)
     
     # Email
     # EMAIL_USE_TLS = True
@@ -196,7 +201,6 @@ STATICFILES_STORAGE = 'djangotogo.s3utils.StaticRootS3BotoStorage'
 AWS_ACCESS_KEY_ID = 'AKIAI4SWCSSRK3ZEATCA'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_PRELOAD_METADATA = True
-#from S3 import CallingFormat
-#AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
+COMPRESS_URL = S3_URL
 
 INTERNAL_IPS = ('127.0.0.1',)
