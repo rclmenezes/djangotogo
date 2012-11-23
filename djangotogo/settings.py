@@ -53,12 +53,9 @@ else:
     
     STATIC_ROOT = "static"
     STATIC_URL = '/static/'
-    # STATICFILES_DIRS = (
-    #         STATIC_ROOT + "/css",
-    #         STATIC_ROOT + "/js",
-    #         STATIC_ROOT + "/img",
-    #     )
-    
+    STATICFILES_DIRS = (
+        CURRENT_DIR + "/static",
+    )
     
     AWS_STORAGE_BUCKET_NAME = 'djangotogodev'
     S3_URL = 'http://djangotogodev.s3.amazonaws.com/'
